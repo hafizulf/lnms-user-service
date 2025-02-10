@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { FindUsersResponseDto } from '../../interface/grpc/dto/find-users.dto';
 import { IUser } from '../interfaces/user.interface';
 import { UserResponseDto } from '../../interface/grpc/dto/user-response.dto';
-import { plainToInstance } from 'class-transformer';
+import { TransformerResponse } from 'src/modules/common/helpers/transformer';
 
 @Injectable()
 export class UserRpcService {
@@ -16,16 +16,9 @@ export class UserRpcService {
     ];
 
     return {
-      users: users.map((user) => this.mapToRpcResponse(user)),
+      users: users.map((user) =>
+        TransformerResponse.transform(user, UserResponseDto),
+      ),
     };
-  }
-
-  private mapToRpcResponse(user: IUser): UserResponseDto {
-    console.log('Before Transformation:', user);
-    const userResponse = plainToInstance(UserResponseDto, user, {
-      excludeExtraneousValues: true,
-    });
-    console.log('After Transformation:', userResponse);
-    return userResponse;
   }
 }

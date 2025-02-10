@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { UserModule } from './modules/users/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { EnvValidationOptions, EnvValidationSchema } from './config/env-validation.config';
+import { LoggerMiddleware } from './middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -17,4 +18,8 @@ import { EnvValidationOptions, EnvValidationSchema } from './config/env-validati
   controllers: [AppController],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
