@@ -8,16 +8,17 @@ async function bootstrap() {
   const appContext = await NestFactory.createApplicationContext(AppModule);
   const configService = appContext.get(ConfigService);
 
+  const grpcUrl = configService.get<string>('GRPC_URL');
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
     transport: Transport.GRPC,
     options: {
       package: 'user',
       protoPath: join(__dirname, './proto/user/user.proto'),
-      url: configService.get<string>('GRPC_URL'),
+      url: grpcUrl,
     },
   });
 
   await app.listen();
-  console.log(`Application is running...`);
+  console.log(`Application is running on: ${grpcUrl}`);
 }
 bootstrap();

@@ -6,7 +6,7 @@ export const EnvValidationSchema = Joi.object({
   NODE_ENV: Joi.string()
     .valid('local', 'development', 'staging', 'production')
     .default('development'),
-  GRPC_URL: Joi.string(),
+  GRPC_URL: Joi.string().required(),
 });
 
 export const EnvValidationOptions = {

@@ -10,12 +10,9 @@ import { EnvValidationOptions, EnvValidationSchema } from './config/env-validati
       isGlobal: true,
       validationSchema: EnvValidationSchema,
       validationOptions: EnvValidationOptions,
-      envFilePath: [
-        `.env.${process.env.NODE_ENV || 'local'}`,
-        '.env',
-      ]
+      envFilePath: [`.env.${process.env.NODE_ENV || 'local'}`, '.env'],
     }),
-    UserModule
+    UserModule,
   ],
   controllers: [AppController],
   providers: [],
