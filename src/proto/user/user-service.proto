@@ -4,6 +4,8 @@ package user;
 
 import "user-model.proto";
 
+message Empty {}
+
 service UserService {
-  rpc FindUsers (FindUsersRequest) returns (FindUsersResponse);
+  rpc FindUsers(Empty) returns (FindUsersResponse);
 }

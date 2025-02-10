@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { UserController } from './interface/grpc/user.controller';
-import { UserService } from './application/services/user.service';
+import { UserRpcService } from './application/services/user.service';
+import { UsersRpcController } from './interface/grpc/controller/user-rpc.controller';
 
 @Module({
-  controllers: [UserController],
-  providers: [UserService]
+  controllers: [UsersRpcController],
+  providers: [
+    UserRpcService,
+  ],
 })
 export class UserModule {}
