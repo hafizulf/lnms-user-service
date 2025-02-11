@@ -1,9 +1,12 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule, OnModuleInit } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { UserModule } from './modules/users/user.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EnvValidationOptions, EnvValidationSchema } from './config/env-validation.config';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import ormConfig from './config/orm.config';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -13,13 +16,30 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
       validationOptions: EnvValidationOptions,
       envFilePath: [`.env.${process.env.NODE_ENV || 'local'}`, '.env'],
     }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ormConfig(configService),
+      inject: [ConfigService],
+    }),
     UserModule,
   ],
   controllers: [AppController],
   providers: [],
 })
-export class AppModule implements NestModule {
+export class AppModule implements NestModule, OnModuleInit {
+  private readonly logger = new Logger(AppModule.name);
+
+  constructor(private dataSource: DataSource) {}
+
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+
+  async onModuleInit() {
+    if (this.dataSource.isInitialized) {
+      this.logger.log('Database connection established successfully');
+    } else {
+      this.logger.error('Failed to establish database connection');
+    }
   }
 }
