@@ -16,4 +16,17 @@ export class UserRepositoryImpl implements UserRepository {
 
     return dataUser.map((entity) => User.fromEntity(entity));
   }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const userEntity = await this.userRepository.findOne({ where: { email } });
+
+    return userEntity ? User.fromEntity(userEntity) : null;
+  }
+
+  async createUser(userData: User): Promise<User> {
+    const userEntity = userData.toEntity();
+    const savedUser = await this.userRepository.save(userEntity);
+
+    return User.fromEntity(savedUser);
+  }
 }

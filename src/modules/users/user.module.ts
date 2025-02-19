@@ -7,6 +7,8 @@ import { REPOSITORY_TYPES } from './infrastructure/database/repositories/reposit
 import { UserRepositoryImpl } from './infrastructure/database/repositories/user.repository.impl';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './infrastructure/database/entities/user.entity';
+import { UserController } from './interface/http/controller/user.controller';
+import { UserService } from './application/services/user-service';
 
 @Module({
   imports: [
@@ -14,7 +16,10 @@ import { UserEntity } from './infrastructure/database/entities/user.entity';
       UserEntity,
     ])
   ],
-  controllers: [UsersRpcController],
+  controllers: [
+    UsersRpcController,
+    UserController,
+  ],
   providers: [
     {
       provide: APP_INTERCEPTOR,
@@ -25,6 +30,7 @@ import { UserEntity } from './infrastructure/database/entities/user.entity';
       useClass: UserRepositoryImpl,
     },
     UserRpcService,
+    UserService,
   ],
 })
 export class UserModule {}

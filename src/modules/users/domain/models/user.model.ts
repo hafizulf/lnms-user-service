@@ -1,7 +1,9 @@
 import { UserEntity } from "../../infrastructure/database/entities/user.entity";
+import { CreateUserRequestDto } from "../../interface/http/dto/create-user.dto";
+import * as bcrypt from 'bcrypt';
 
 export class User {
-  private _id: number;
+  private _id?: number;
   private _name: string;
   private _email: string;
   private _password: string;
@@ -9,14 +11,27 @@ export class User {
   private _created_at: Date;
   private _updated_at: Date;
 
-  constructor(id: number) {
+  constructor(id?: number) {
     this._id = id;
+  }
+
+  public static create(userData: CreateUserRequestDto): User {
+    const now = new Date();
+    const user = new User();
+
+    user._name = userData.name;
+    user._email = userData.email;
+    user._password = bcrypt.hashSync(userData.password, 10);
+    user._is_active = true;
+    user._created_at = now;
+    user._updated_at = now;
+
+    return user;
   }
 
   public static fromEntity(entity: UserEntity): User {
     const user = new User(entity.id);
 
-    user._id = entity.id;
     user._name = entity.name;
     user._email = entity.email;
     user._password = entity.password;
@@ -30,7 +45,9 @@ export class User {
   public toEntity(): UserEntity {
     const entity = new UserEntity();
 
-    entity.id = this._id;
+    if (this._id !== undefined) {
+      entity.id = this._id;
+    }
     entity.name = this._name;
     entity.email = this._email;
     entity.password = this._password;
@@ -41,8 +58,8 @@ export class User {
     return entity;
   }
 
-  // Getter
-  get id(): number {
+  // Getters & Setters
+  get id(): number | undefined {
     return this._id;
   }
 
@@ -70,11 +87,6 @@ export class User {
     return this._updated_at;
   }
 
-  // Setter
-  set id(id: number) {
-    this._id = id;
-  }
-
   set name(name: string) {
     this._name = name;
   }
@@ -83,16 +95,13 @@ export class User {
     this._email = email;
   }
 
-  set password(password: string) {
-    this._password = password;
+  async setPassword(password: string) {
+    const salt = await bcrypt.genSalt(10);
+    this._password = await bcrypt.hash(password, salt);
   }
 
   set is_active(is_active: boolean) {
     this._is_active = is_active;
-  }
-
-  set created_at(created_at: Date) {
-    this._created_at = created_at;
   }
 
   set updated_at(updated_at: Date) {

@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
+import { ValidationPipe, ValidationError, UnprocessableEntityException } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,8 +21,25 @@ async function bootstrap() {
     },
   });
 
-  // Start both the microservice and the app (if needed)
+  // Start the microservice app
   await app.startAllMicroservices();
+
+  // start the app
+  app.useGlobalPipes(
+    new ValidationPipe({
+      exceptionFactory: (errors: ValidationError[]) => {
+        return new UnprocessableEntityException({
+          statusCode: 422,
+          message: 'Validation errors',
+          errors: errors.map((error) => ({
+            field: error.property,
+            constraints: error.constraints,
+          })),
+        });
+      },
+    }),
+  );
+
   await app.listen(appPort);
 
   console.log(`Microservice is running on: ${grpcUrl}`);
