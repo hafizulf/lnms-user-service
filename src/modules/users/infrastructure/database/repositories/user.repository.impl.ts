@@ -29,4 +29,41 @@ export class UserRepositoryImpl implements UserRepository {
 
     return User.fromEntity(savedUser);
   }
+
+  async findById(id: number): Promise<User | null> {
+    const userEntity = await this.userRepository.findOneBy({ id });
+
+    return userEntity ? User.fromEntity(userEntity) : null;
+  }
+
+  async updateUser(userData: User): Promise<User> {
+    // example using transaction (built-in typeorm)
+    // return this.userRepository.manager.transaction(
+    //   async (transactionalEntityManager) => {
+    //     const userEntity = userData.toEntity();
+    //     const updatedUser = await transactionalEntityManager.save(userEntity);
+
+    //     return User.fromEntity(updatedUser);
+    //   },
+    // );
+
+    // example using transaction (manual query runner)
+    const queryRunner = this.userRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const userEntity = userData.toEntity();
+      const updatedUser = await queryRunner.manager.save(userEntity);
+
+      await queryRunner.commitTransaction();
+
+      return User.fromEntity(updatedUser);
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release(); // Release connection
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import { UserEntity } from "../../infrastructure/database/entities/user.entity";
 import { CreateUserRequestDto } from "../../interface/http/dto/create-user.dto";
 import * as bcrypt from 'bcrypt';
+import { UpdateUserRequestDto } from "../../interface/http/dto/update-user.dto";
 
 export class User {
   private _id?: number;
@@ -27,6 +28,12 @@ export class User {
     user._updated_at = now;
 
     return user;
+  }
+
+  public update(userData: UpdateUserRequestDto): void {
+    this.name = userData.name ?? this.name;
+    this.email = userData.email ?? this.email;
+    this._updated_at = new Date();
   }
 
   public static fromEntity(entity: UserEntity): User {

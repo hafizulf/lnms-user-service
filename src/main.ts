@@ -27,6 +27,7 @@ async function bootstrap() {
   // start the app
   app.useGlobalPipes(
     new ValidationPipe({
+      transform: true, // Enables transformation to class instance
       exceptionFactory: (errors: ValidationError[]) => {
         return new UnprocessableEntityException({
           statusCode: 422,
