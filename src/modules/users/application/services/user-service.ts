@@ -52,4 +52,15 @@ export class UserService {
     const updatedUser = await this._userRepository.updateUser(user);
     return TransformerResponse.transform(updatedUser, UpdateUserResponseDto);
   }
+
+  async deleteUser(
+    id: number,
+  ): Promise<void> {
+    const user = await this._userRepository.findById(id);
+    if (!user) {
+      throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND);
+    }
+
+    await this._userRepository.deleteUser(user.id!);
+  }
 }

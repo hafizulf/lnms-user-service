@@ -31,7 +31,7 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async findById(id: number): Promise<User | null> {
-    const userEntity = await this.userRepository.findOneBy({ id });
+    const userEntity = await this.userRepository.findOneBy({ id, is_active: true });
 
     return userEntity ? User.fromEntity(userEntity) : null;
   }
@@ -65,5 +65,9 @@ export class UserRepositoryImpl implements UserRepository {
     } finally {
       await queryRunner.release(); // Release connection
     }
+  }
+
+  async deleteUser(id: number): Promise<void> {
+    await this.userRepository.softDelete(id);
   }
 }

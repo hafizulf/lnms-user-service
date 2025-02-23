@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from "@nestjs/common";
 import { UserRpcService } from "src/modules/users/application/services/user-rpc.service";
 import { UserService } from "src/modules/users/application/services/user-service";
 import { CreateUserRequestDto, CreateUserResponseDto } from "../dto/create-user.dto";
@@ -34,5 +34,15 @@ export class UserController {
     const data = await this._userService.updateUser(id, request);
 
     return new ResponseDto<UpdateUserResponseDto>('success', 'User updated successfully', data);
+  }
+
+  @Delete('/users/:id')
+  async deleteUser(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ResponseDto<void>> {
+    const data = await this._userService.deleteUser(id);
+
+    return new ResponseDto<void>('success', 'User deleted successfully');
+
   }
 }
