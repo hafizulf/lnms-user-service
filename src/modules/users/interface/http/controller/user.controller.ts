@@ -23,7 +23,7 @@ export class UserController {
   ): Promise<ResponseDto<CreateUserResponseDto>> {
     const data = await this._userService.createUser(request);
 
-    return new ResponseDto<CreateUserResponseDto>('success', 'User created successfully', data);
+    return new ResponseDto<CreateUserResponseDto>(201, 'User created successfully', data);
   }
 
   @Put('/users/:id')
@@ -33,7 +33,7 @@ export class UserController {
   ): Promise<ResponseDto<UpdateUserResponseDto>> {
     const data = await this._userService.updateUser(id, request);
 
-    return new ResponseDto<UpdateUserResponseDto>('success', 'User updated successfully', data);
+    return new ResponseDto<UpdateUserResponseDto>(200, 'User updated successfully', data);
   }
 
   @Delete('/users/:id')
@@ -42,7 +42,7 @@ export class UserController {
   ): Promise<ResponseDto<void>> {
     const data = await this._userService.deleteUser(id);
 
-    return new ResponseDto<void>('success', 'User deleted successfully');
+    return new ResponseDto<void>(200, 'User deleted successfully');
 
   }
 }

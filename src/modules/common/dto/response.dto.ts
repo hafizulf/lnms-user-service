@@ -1,6 +1,6 @@
 export class ResponseDto<T> {
   constructor(
-    readonly code: string,
+    readonly statusCode: number,
     readonly message: string,
     readonly data?: T,
   ) {}
