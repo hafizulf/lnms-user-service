@@ -12,7 +12,7 @@ export class UserRepositoryImpl implements UserRepository {
   ) {}
 
   async findUsers(): Promise<User[]> {
-    const dataUser = await this.userRepository.find();
+    const dataUser = await this.userRepository.findBy({ is_active: true });
 
     return dataUser.map((entity) => User.fromEntity(entity));
   }
