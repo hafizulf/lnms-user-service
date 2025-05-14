@@ -28,6 +28,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true, // Enables transformation to class instance
+      whitelist: true, // Removes all fields that are not in the DTO
       exceptionFactory: (errors: ValidationError[]) => {
         return new UnprocessableEntityException({
           statusCode: 422,

@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  postgres_lnms_user:
+    container_name: postgres_lnms_user
+    env_file:
+      - .env.development
+    image: postgres:17
+    ports:
+      - "${DB_PORT}:5432"
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - lnms_user_data:/var/lib/postgresql/data
+
+volumes:
+  lnms_user_data:
